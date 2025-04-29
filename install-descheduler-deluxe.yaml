@@ -1,4 +1,20 @@
 ---
+- name: Wait for HCOMisconfiguredDescheduler alert to clear
+  shell: |
+    while true; do
+      ALERT=$(oc get prometheusrule -n openshift-cnv kubevirt-hco-alerts -o jsonpath='{.spec.groups[*].rules[*].alert}' 2>/dev/null | grep HCOMisconfiguredDescheduler || true)
+      if [ -z "$ALERT" ]; then
+        echo "Alert cleared."
+        exit 0
+      fi
+      echo "Alert still active... rechecking in 30 seconds..."
+      sleep 30
+    done
+  retries: 20
+  delay: 30
+  register: alert_check
+  changed_when: false
+
 - name: Install Kube Descheduler Deluxe
   hosts: localhost
   gather_facts: false

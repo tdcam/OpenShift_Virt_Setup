@@ -5,6 +5,18 @@ set -e
 NAMESPACE="openshift-kube-descheduler-operator"
 DESCHEDULER_CR_FILE="/tmp/kube-descheduler-gold-standard.yaml"
 
+echo "⏳ Waiting for HCOMisconfiguredDescheduler alert to clear..."
+
+while true; do
+  ALERT=$(oc get prometheusrule -n openshift-cnv kubevirt-hco-alerts -o jsonpath='{.spec.groups[*].rules[*].alert}' 2>/dev/null | grep HCOMisconfiguredDescheduler || true)
+  if [ -z "$ALERT" ]; then
+    echo "✅ HCOMisconfiguredDescheduler alert has cleared!"
+    break
+  fi
+  echo "🔄 Alert still present... rechecking in 30 seconds..."
+  sleep 30
+done
+
 echo "⏳ Waiting for Kube Descheduler Operator to install..."
 
 # Wait until the descheduler-operator pod exists and is running
