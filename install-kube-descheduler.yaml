@@ -1,0 +1,50 @@
+---
+- name: Install and configure Kube Descheduler
+  hosts: localhost
+  gather_facts: false
+  tasks:
+
+    - name: Wait for descheduler-operator pod to be running
+      shell: |
+        until oc get pods -n openshift-kube-descheduler-operator | grep descheduler-operator | grep Running; do
+          sleep 5
+        done
+      retries: 20
+      delay: 15
+      register: operator_ready
+      changed_when: false
+
+    - name: Create KubeDescheduler custom resource
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: operator.openshift.io/v1
+          kind: KubeDescheduler
+          metadata:
+            name: cluster
+            namespace: openshift-kube-descheduler-operator
+          spec:
+            managementState: Managed
+            mode: Predictive
+            deschedulingIntervalSeconds: 900
+            profiles:
+              - AffinityAndTaints
+              - TopologyAndDuplicates
+              - LifecycleAndUtilization
+            profileCustomizations:
+              devEnableEvictionsInBackground: true
+
+    - name: Wait for descheduler pod to be running
+      shell: |
+        until oc get pods -n openshift-kube-descheduler-operator | grep descheduler | grep 1/1 | grep Running; do
+          sleep 5
+        done
+      retries: 20
+      delay: 15
+      register: descheduler_ready
+      changed_when: false
+
+    - name: Success message
+      debug:
+        msg: "🚀 Kube Descheduler is fully installed and configured!"
+

@@ -1,0 +1,7 @@
+---
+- name: Install Descheduler on OpenShift Virt Cluster
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - kube-descheduler
+
