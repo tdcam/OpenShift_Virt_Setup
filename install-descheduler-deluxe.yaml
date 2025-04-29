@@ -1,0 +1,11 @@
+---
+- name: Install Kube Descheduler Deluxe
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: kube-descheduler-deluxe
+      vars:
+        descheduler_namespace: openshift-kube-descheduler-operator
+        descheduler_interval_seconds: 600
+        install_node_healthcheck_operator: true
+

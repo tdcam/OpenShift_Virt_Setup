@@ -12,6 +12,10 @@ evict a VM.
 The install-kube-descheduler.yaml playbooks is an all-in-one playbook which
 does basically the same thing.
 
-The install-kube-descheduler-role.yaml is a playbook which calls a role to
-get everything set up. You can peruse the role directory to see what I'm 
-doing in the role.
+The install-kube-descheduler-role.yaml playbook calls the kube-descheduler role
+under roles, You can peruse that simple role to see what I had in mind.
+
+The install-kube-descheduler-role.yaml is a playbook which calls the 
+kube-descheduler-deluxe role to get everything set up. You can peruse the 
+role directory to see what I'm doing in the role. Its slightly more 
+complicated but I've tried to write it so that it's easily followed.

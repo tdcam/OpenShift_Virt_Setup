@@ -1,0 +1,6 @@
+# Default values for the kube-descheduler-deluxe role
+
+descheduler_namespace: openshift-kube-descheduler-operator
+descheduler_interval_seconds: 900
+install_node_healthcheck_operator: false
+
